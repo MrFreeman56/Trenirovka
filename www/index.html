@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Тренировки: Подтягивания и Бег</title>
+<style>
+  :root{
+    --bg:#0f1720; --card:#1b2530; --accent:#22c55e; --accent2:#3b82f6;
+    --text:#e8eef4; --muted:#8aa0b3;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  body{
+    margin:0; font-family:-apple-system,Roboto,Arial,sans-serif;
+    background:var(--bg); color:var(--text); padding-bottom:80px;
+  }
+  header{
+    padding:16px; text-align:center; font-size:18px; font-weight:600;
+    background:linear-gradient(90deg,var(--accent),var(--accent2));
+    color:#04121f;
+  }
+  .tabs{display:flex; background:var(--card); position:sticky; top:0; z-index:10;}
+  .tab{
+    flex:1; padding:14px; text-align:center; color:var(--muted);
+    font-weight:600; cursor:pointer; border-bottom:3px solid transparent;
+  }
+  .tab.active{color:var(--text); border-bottom-color:var(--accent);}
+  .page{display:none; padding:16px;}
+  .page.active{display:block;}
+  .card{
+    background:var(--card); border-radius:14px; padding:16px; margin-bottom:14px;
+  }
+  .card h3{margin:0 0 10px; font-size:16px;}
+  label{display:block; font-size:13px; color:var(--muted); margin:8px 0 4px;}
+  input,select{
+    width:100%; padding:12px; border-radius:10px; border:1px solid #2c3a48;
+    background:#0d151d; color:var(--text); font-size:16px;
+  }
+  button{
+    width:100%; padding:14px; margin-top:12px; border:none; border-radius:10px;
+    background:var(--accent); color:#04121f; font-size:16px; font-weight:700;
+    cursor:pointer;
+  }
+  button.sec{background:var(--accent2); color:#fff;}
+  button.ghost{background:transparent; color:var(--muted); border:1px solid #2c3a48;}
+  .stat{display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #26323e;}
+  .stat:last-child{border-bottom:none;}
+  .stat b{color:var(--accent);}
+  .history-item{
+    display:flex; justify-content:space-between; padding:10px 0;
+    border-bottom:1px solid #26323e; font-size:14px;
+  }
+  .history-item:last-child{border-bottom:none;}
+  .empty{color:var(--muted); text-align:center; padding:20px 0; font-size:14px;}
+  .timer{font-size:44px; text-align:center; font-weight:700; margin:10px 0; color:var(--accent);}
+  .row{display:flex; gap:10px;}
+  .row > *{flex:1;}
+</style>
+</head>
+<body>
+
+<header>💪 Тренировки</header>
+
+<div class="tabs">
+  <div class="tab active" data-tab="pullups">Подтягивания</div>
+  <div class="tab" data-tab="run">Бег</div>
+  <div class="tab" data-tab="stats">Статистика</div>
+</div>
+
+<!-- ================= ПОДТЯГИВАНИЯ ================= -->
+<div class="page active" id="pullups">
+  <div class="card">
+    <h3>Новая тренировка</h3>
+    <label>Подходов</label>
+    <input type="number" id="p_sets" value="5" min="1">
+    <label>Повторений в подходе</label>
+    <input type="number" id="p_reps" value="10" min="1">
+    <label>Отдых между подходами (сек)</label>
+    <input type="number" id="p_rest" value="90" min="10">
+    <button onclick="startPullups()">Начать</button>
+  </div>
+
+  <div class="card" id="p_workout" style="display:none;">
+    <h3>Подход <span id="p_current">1</span> из <span id="p_total">5</span></h3>
+    <div class="timer" id="p_timer">00:00</div>
+    <div class="row">
+      <button class="sec" onclick="completeSet()">Подход сделан</button>
+      <button class="ghost" onclick="stopPullups()">Стоп</button>
+    </div>
+    <div class="stat"><span>Всего повторений</span><b id="p_reps_total">0</b></div>
+  </div>
+
+  <div class="card">
+    <h3>История</h3>
+    <div id="p_history"><div class="empty">Пока пусто</div></div>
+  </div>
+</div>
+
+<!-- ================= БЕГ ================= -->
+<div class="page" id="run">
+  <div class="card">
+    <h3>Новая пробежка</h3>
+    <label>Дистанция (км)</label>
+    <input type="number" id="r_dist" value="5" step="0.1" min="0.1">
+    <label>Время (мин)</label>
+    <input type="number" id="r_time" value="30" min="1">
+    <button onclick="saveRun()">Сохранить</button>
+  </div>
+
+  <div class="card">
+    <h3>Секундомер</h3>
+    <div class="timer" id="r_timer">00:00</div>
+    <div class="row">
+      <button class="sec" onclick="toggleRunTimer()" id="r_btn">Старт</button>
+      <button class="ghost" onclick="resetRunTimer()">Сброс</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>История</h3>
+    <div id="r_history"><div class="empty">Пока пусто</div></div>
+  </div>
+</div>
+
+<!-- ================= СТАТИСТИКА ================= -->
+<div class="page" id="stats">
+  <div class="card">
+    <h3>Общая статистика</h3>
+    <div class="stat"><span>Тренировок подтягиваний</span><b id="s_pullups">0</b></div>
+    <div class="stat"><span>Всего подтягиваний</span><b id="s_reps">0</b></div>
+    <div class="stat"><span>Пробежек</span><b id="s_runs">0</b></div>
+    <div class="stat"><span>Всего км</span><b id="s_km">0</b></div>
+    <div class="stat"><span>Средний темп</span><b id="s_pace">—</b></div>
+    <button class="ghost" onclick="clearAll()">Очистить все данные</button>
+  </div>
+</div>
+
+<script>
+/* ---------- Хранилище ---------- */
+const DB = {
+  get(k, d){ try{ return JSON.parse(localStorage.getItem(k)) ?? d; }catch(e){ return d; } },
+  set(k, v){ localStorage.setItem(k, JSON.stringify(v)); }
+};
+
+/* ---------- Табы ---------- */
+document.querySelectorAll('.tab').forEach(t=>{
+  t.onclick = ()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    document.getElementById(t.dataset.tab).classList.add('active');
+    renderStats();
+  };
+});
+
+/* ---------- Утилиты ---------- */
+const fmt = s => String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+const today = () => new Date().toLocaleDateString('ru-RU');
+
+/* ================= ПОДТЯГИВАНИЯ ================= */
+let pState = null, pInterval = null;
+
+function startPullups(){
+  const sets = +document.getElementById('p_sets').value;
+  const reps = +document.getElementById('p_reps').value;
+  const rest = +document.getElementById('p_rest').value;
+  pState = { sets, reps, rest, current:1, done:0, seconds:0, phase:'work' };
+  document.getElementById('p_workout').style.display='block';
+  document.getElementById('p_total').textContent = sets;
+  tickPullups();
+  clearInterval(pInterval);
+  pInterval = setInterval(tickPullups, 1000);
+}
+
+function tickPullups(){
+  if(!pState) return;
+  pState.seconds++;
+  document.getElementById('p_timer').textContent = fmt(pState.seconds);
+  document.getElementById('p_current').textContent = pState.current;
+  document.getElementById('p_reps_total').textContent = pState.done;
+}
+
+function completeSet(){
+  if(!pState) return;
+  pState.done += pState.reps;
+  if(pState.current >= pState.sets){
+    finishPullups();
+    return;
+  }
+  pState.current++;
+  pState.seconds = 0;
+  document.getElementById('p_reps_total').textContent = pState.done;
+}
+
+function finishPullups(){
+  clearInterval(pInterval);
+  const log = DB.get('pullups', []);
+  log.unshift({ date: today(), sets: pState.sets, reps: pState.reps, total: pState.done });
+  DB.set('pullups', log.slice(0,50));
+  alert(`Готово! Всего подтягиваний: ${pState.done}`);
+  stopPullups();
+  renderPullupsHistory();
+  renderStats();
+}
+
+function stopPullups(){
+  clearInterval(pInterval);
+  pState = null;
+  document.getElementById('p_workout').style.display='none';
+  document.getElementById('p_timer').textContent='00:00';
+}
+
+function renderPullupsHistory(){
+  const log = DB.get('pullups', []);
+  const el = document.getElementById('p_history');
+  if(!log.length){ el.innerHTML='<div class="empty">Пока пусто</div>'; return; }
+  el.innerHTML = log.map(x=>
+    `<div class="history-item"><span>${x.date}</span><span>${x.sets}×${x.reps} = <b>${x.total}</b></span></div>`
+  ).join('');
+}
+
+/* ================= БЕГ ================= */
+let rInterval=null, rSeconds=0, rRunning=false;
+
+function toggleRunTimer(){
+  if(rRunning){ clearInterval(rInterval); rRunning=false; document.getElementById('r_btn').textContent='Старт'; }
+  else{
+    rRunning=true; document.getElementById('r_btn').textContent='Пауза';
+    rInterval = setInterval(()=>{ rSeconds++; document.getElementById('r_timer').textContent=fmt(rSeconds); },1000);
+  }
+}
+function resetRunTimer(){
+  clearInterval(rInterval); rRunning=false; rSeconds=0;
+  document.getElementById('r_timer').textContent='00:00';
+  document.getElementById('r_btn').textContent='Старт';
+}
+
+function saveRun(){
+  const dist = +document.getElementById('r_dist').value;
+  const time = +document.getElementById('r_time').value;
+  if(!dist || !time) return alert('Заполните дистанцию и время');
+  const log = DB.get('runs', []);
+  log.unshift({ date: today(), dist, time, pace: (time/dist).toFixed(2) });
+  DB.set('runs', log.slice(0,50));
+  renderRunHistory();
+  renderStats();
+  alert('Пробежка сохранена!');
+}
+
+function renderRunHistory(){
+  const log = DB.get('runs', []);
+  const el = document.getElementById('r_history');
+  if(!log.length){ el.innerHTML='<div class="empty">Пока пусто</div>'; return; }
+  el.innerHTML = log.map(x=>
+    `<div class="history-item"><span>${x.date}</span><span>${x.dist} км — ${x.time} мин (<b>${x.pace}</b> мин/км)</span></div>`
+  ).join('');
+}
+
+/* ================= СТАТИСТИКА ================= */
+function renderStats(){
+  const p = DB.get('pullups', []);
+  const r = DB.get('runs', []);
+  const totalReps = p.reduce((s,x)=>s+x.total,0);
+  const totalKm = r.reduce((s,x)=>s+x.dist,0);
+  const totalTime = r.reduce((s,x)=>s+x.time,0);
+  document.getElementById('s_pullups').textContent = p.length;
+  document.getElementById('s_reps').textContent = totalReps;
+  document.getElementById('s_runs').textContent = r.length;
+  document.getElementById('s_km').textContent = totalKm.toFixed(1);
+  document.getElementById('s_pace').textContent = totalKm ? (totalTime/totalKm).toFixed(2)+' мин/км' : '—';
+}
+
+function clearAll(){
+  if(!confirm('Удалить все данные?')) return;
+  DB.set('pullups', []); DB.set('runs', []);
+  renderPullupsHistory(); renderRunHistory(); renderStats();
+}
+
+/* ---------- Init ---------- */
+renderPullupsHistory();
+renderRunHistory();
+renderStats();
+</script>
+</body>
+</html>

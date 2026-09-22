@@ -1,0 +1,46 @@
+0 verbose cli /data/data/com.termux/files/usr/bin/node /data/data/com.termux/files/usr/bin/npm
+1 info using npm@11.19.1
+2 info using node@v26.4.0
+3 silly config load:file:/data/data/com.termux/files/usr/lib/node_modules/npm/npmrc
+4 silly config load:file:/data/data/com.termux/files/home/.npmrc
+5 silly config load:file:/data/data/com.termux/files/usr/etc/npmrc
+6 verbose title npm install @capacitor/android
+7 verbose argv "install" "@capacitor/android"
+8 verbose logfile logs-max:10 dir:/data/data/com.termux/files/home/.npm/_logs/2026-09-22T11_09_30_023Z-
+9 verbose logfile /data/data/com.termux/files/home/.npm/_logs/2026-09-22T11_09_30_023Z-debug-0.log
+10 silly logfile done cleaning log files
+11 silly install-scripts no package.json at prefix Could not read package.json: Error: ENOENT: no such file or directory, open '/data/data/com.termux/files/home/package.json'
+12 silly packumentCache heap:1174405120 maxSize:293601280 maxEntrySize:146800640
+13 silly idealTree buildDeps
+14 silly fetch manifest @capacitor/android@*
+15 silly packumentCache full:https://registry.npmjs.org/@capacitor%2fandroid cache-miss
+16 http fetch GET 200 https://registry.npmjs.org/@capacitor%2fandroid 1929ms (cache miss)
+17 silly packumentCache full:https://registry.npmjs.org/@capacitor%2fandroid set size:undefined disposed:false
+18 silly fetch manifest @capacitor/core@^8.5.0
+19 silly packumentCache full:https://registry.npmjs.org/@capacitor%2fcore cache-miss
+20 http fetch GET 200 https://registry.npmjs.org/@capacitor%2fcore 987ms (cache miss)
+21 silly packumentCache full:https://registry.npmjs.org/@capacitor%2fcore set size:undefined disposed:false
+22 silly placeDep ROOT @capacitor/android@8.5.2 OK for:  want: *
+23 silly placeDep ROOT @capacitor/core@8.5.2 OK for: @capacitor/android@8.5.2 want: ^8.5.0
+24 silly fetch manifest tslib@^2.1.0
+25 silly packumentCache full:https://registry.npmjs.org/tslib cache-miss
+26 http fetch GET 200 https://registry.npmjs.org/tslib 160ms (cache revalidated)
+27 silly packumentCache full:https://registry.npmjs.org/tslib set size:108843 disposed:false
+28 silly placeDep ROOT tslib@2.8.1 OK for: @capacitor/core@8.5.2 want: ^2.1.0
+29 silly reify moves {}
+30 http cache @capacitor/core@https://registry.npmjs.org/@capacitor/core/-/core-8.5.2.tgz 0ms (cache hit)
+31 http cache tslib@https://registry.npmjs.org/tslib/-/tslib-2.8.1.tgz 0ms (cache hit)
+32 http cache @capacitor/android@https://registry.npmjs.org/@capacitor/android/-/android-8.5.2.tgz 0ms (cache hit)
+33 silly tarball no local data for @capacitor/core@https://registry.npmjs.org/@capacitor/core/-/core-8.5.2.tgz. Extracting by manifest.
+34 silly tarball no local data for @capacitor/android@https://registry.npmjs.org/@capacitor/android/-/android-8.5.2.tgz. Extracting by manifest.
+35 http fetch GET 200 https://registry.npmjs.org/@capacitor/core/-/core-8.5.2.tgz 450ms (cache miss)
+36 http fetch GET 200 https://registry.npmjs.org/@capacitor/android/-/android-8.5.2.tgz 962ms (cache miss)
+37 silly ADD node_modules/tslib
+38 silly ADD node_modules/@capacitor/core
+39 silly ADD node_modules/@capacitor/android
+40 verbose cwd /data/data/com.termux/files/home
+41 verbose os Linux 5.4.289-qgki-gf6cb1f712a6e
+42 verbose node v26.4.0
+43 verbose npm  v11.19.1
+44 verbose exit 0
+45 info ok
